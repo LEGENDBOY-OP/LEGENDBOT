@@ -1,0 +1,59 @@
+#!/bin/bash
+
+
+_python_() {
+    python3${pVer%.*} -c "$1"
+}
+
+_LEGENDBOT_MAIN() {
+    $(_python_ 'from git import Repo
+import sys
+_UPSTREAM_ = "https://github.com/LEGENDBOY-OP/LEGENDBOT"
+_BRANCH_ = "master"
+repo = Repo.init()
+origin = repo.create_remote("temponame", _UPSTREAM_)
+origin.fetch()
+repo.create_head(_BRANCH_, origin.refs[_BRANCH_])
+repo.heads[_BRANCH_].checkout(True) ')
+}
+
+_legend_repo () {
+    local lrepo
+    lrepo=`echo "aHR0cHM6Ly9naXRodWIuY29tL0lUUy1MRUdFTkRCT1QvTEVHRU5EQk9U" | base64 -d`
+    echo "$rlink"
+}
+
+_legend_zip () {
+    echo "aHR0cHM6Ly9naXRodWIuY29tL0lUUy1MRUdFTkRCT1QvTEVHRU5EQk9UL2FyY2hpdmUvbWFzdGVyLnppcA==" | base64 -d
+}
+
+_LEGENDBOT_PLUG() {
+    local lrepo=$(_legend_repo)
+    $(_python_ 'from git import Repo
+import sys
+_UPSTREAM_ = "'$lrepo'"
+_BRANCH_ = "master"
+repo = Repo.init()
+origin = repo.create_remote("temponame", _UPSTREAM_)
+origin.fetch()
+repo.create_head(_BRANCH_, origin.refs[_BRANCH_])
+repo.heads[_BRANCH_].checkout(True) ')
+}
+
+_starter () {
+    local legendpath
+    legendpath="Plugins.zip"
+    echo "••• DOWNLOADING LEGENDBOT •••"
+    wget -q $(_legend_zip) -O "$legendpath"
+    LEGENDPATH=$(zipinfo -1 "$legendpath" | grep -v "/.");
+    unzip -qq "$legendpath"
+    rm -rf "$legendpath"
+    # _LEGENDBOT_MAIN
+    cd $LEGENDPATH
+    # _LEHENDBOT_PLUG
+    python3 ../setup/updater.py ../requirements.txt requirements.txt
+    echo "••• STARTING LEGENDBOT •••"
+    python3 -m userbot
+}
+
+_starter
